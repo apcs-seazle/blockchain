@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract NFTMinh is Ownable,ERC721
+contract SeazleNFT is Ownable,ERC721
 {
     uint public mintPrice = 0.01 ether;
     uint public totalSupply ;
@@ -15,7 +15,7 @@ contract NFTMinh is Ownable,ERC721
     address public user;
     mapping(address=>uint256) public mintWallets;
 
-    constructor ()  ERC721("NFT Minh"," NFTMinh")
+    constructor ()  ERC721("Seazle NFT"," SeazleNFT")
     {
         maxSupply=5;
         user = msg.sender;
