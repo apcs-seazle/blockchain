@@ -12,6 +12,8 @@ contract SeazleNFT is Ownable,ERC721
     uint public maxSupply;
     bool public isMintEnable;
     uint public myTotal =0;
+    uint public amountInitNFT = 50;
+
     address public user;
     mapping(address=>uint256) public mintWallets;
 
@@ -31,11 +33,22 @@ contract SeazleNFT is Ownable,ERC721
         maxSupply=_maxSupply;
     }
 
-    function mint() external payable
+    /*function mint() external payable
     {
         require(isMintEnable,"minting not enabled");
         require(mintWallets[msg.sender] <1 ,"exceeds max");
-        require(msg.value == 0.01 ether,"Dont enough value");
+        //require(msg.value == 0.01 ether,"Dont enough value");   // mint co phi thi enabled tml nay
+        require(maxSupply > totalSupply, "sold out");
+
+        mintWallets[msg.sender] ++;
+        totalSupply +=1;
+        _safeMint(msg.sender,totalSupply);
+    } */
+
+    function mint() public
+    {
+        require(isMintEnable,"minting not enabled");
+        require(mintWallets[msg.sender] <1 ,"exceeds max");
         require(maxSupply > totalSupply, "sold out");
 
         mintWallets[msg.sender] ++;
