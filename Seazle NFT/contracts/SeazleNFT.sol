@@ -2,57 +2,54 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract SeazleNFT is Ownable,ERC721
 {
-    uint public mintPrice = 0.01 ether;
-    uint public totalSupply ;
-    uint public maxSupply;
-    bool public isMintEnable;
     uint public myTotal =0;
-    uint public amountInitNFT = 50;
-
-    address public user;
-    mapping(address=>uint256) public mintWallets;
+    uint listNFTMinted ;  
+    uint decimalEthToWei = 10**18;
+    address public host;
+    string key = "minh";
 
     constructor ()  ERC721("Seazle NFT"," SeazleNFT")
     {
-        maxSupply=5;
-        user = msg.sender;
+        host = msg.sender;
     }
 
-    function toggleIsMintEnabled() external onlyOwner
+    function buyNFT(uint nftID , uint priceInWei) external payable   //nftID get from buyer, price get from DB convert to wei
     {
-        isMintEnable = !isMintEnable;
+        uint _price =  priceInWei * 1 wei;
+        require(msg.value == _price , "Dont enough value");  
+        _safeMint(msg.sender, nftID);
     }
 
-    function setMaxSupply(uint _maxSupply) external onlyOwner
+    function sellNFT(uint nftID) public    //nftID get from seller 
     {
-        maxSupply=_maxSupply;
+        transferFrom((msg.sender), host, nftID);
+    }   
+
+    function sendEther (address payable recipient , uint amountInWei , string memory _key) public
+    {
+        require(keccak256(abi.encodePacked((_key))) == keccak256(abi.encodePacked((key))), "khong phai key");
+        require(recipient == msg.sender, "Sai cmn nguoi goi roi em");
+        uint amount = amountInWei * (1 wei);
+        recipient.transfer(amount);
     }
 
-    /*function mint() external payable
-    {
-        require(isMintEnable,"minting not enabled");
-        require(mintWallets[msg.sender] <1 ,"exceeds max");
-        //require(msg.value == 0.01 ether,"Dont enough value");   // mint co phi thi enabled tml nay
-        require(maxSupply > totalSupply, "sold out");
+    function stringToUint(string memory s) private pure returns (uint) {
+        bytes memory b = bytes(s);
+        uint result = 0;
+        for (uint256 i = 0; i < b.length; i++) {
+            uint256 c = uint256(uint8(b[i]));
+            if (c >= 48 && c <= 57) {
+                result = result * 10 + (c - 48);
+            }
+        }
+        return result;
+    }
 
-        mintWallets[msg.sender] ++;
-        totalSupply +=1;
-        _safeMint(msg.sender,totalSupply);
-    } */
+}
 
-    function mint() public
-    {
-        require(isMintEnable,"minting not enabled");
-        require(mintWallets[msg.sender] <1 ,"exceeds max");
-        require(maxSupply > totalSupply, "sold out");
-
-        mintWallets[msg.sender] ++;
-        totalSupply +=1;
-        _safeMint(msg.sender,totalSupply);
-    } 
 }
